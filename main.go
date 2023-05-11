@@ -8,18 +8,24 @@ import (
 
 // Обработчик маршрута "/"
 func home(w http.ResponseWriter, r *http.Request) {
-    // Читаем содержимое файла index.html
+	if r.URL.Path != "/" {
+		html, err := ioutil.ReadFile("404.html")
+        if err != nil {
+            http.Error(w, "Ошибка сервера", http.StatusInternalServerError)
+        }
+       w.Header().Set("Content-Type", "text/html; charset=utf-8")
+        w.Write(html)
+        return
+    } 
+        
     html, err := ioutil.ReadFile("index.html")
     if err != nil {
-        // Если возникла ошибка, отправляем ошибку 500 и сообщение об ошибке
         http.Error(w, "Ошибка сервера", http.StatusInternalServerError)
         return
     }
 
-    // Устанавливаем заголовок Content-Type для ответа как "text/html"
     w.Header().Set("Content-Type", "text/html")
-
-    // Отправляем содержимое страницы index.html в качестве ответа
+    
     w.Write(html)
 }
 
@@ -35,18 +41,12 @@ func createSnip(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    // Используется функция http.NewServeMux() для инициализации нового рутера, затем
-    // функцию "home" регистрируется как обработчик для URL-шаблона "/".
     mux := http.NewServeMux()
+    
     mux.HandleFunc("/", home)
     mux.HandleFunc("/snip", showSnip)
     mux.HandleFunc("/snip/create", createSnip)
 
-    // Используется функция http.ListenAndServe() для запуска нового веб-сервера. 
-    // Мы передаем два параметра: TCP-адрес сети для прослушивания (в данном случае это "localhost:4000")
-    // и созданный рутер. Если вызов http.ListenAndServe() возвращает ошибку
-    // мы используем функцию log.Fatal() для логирования ошибок. Обратите внимание
-    // что любая ошибка, возвращаемая от http.ListenAndServe(), всегда non-nil.
     log.Println("Запуск веб-сервера на http://127.0.0.1:4000")
     err := http.ListenAndServe(":4000", mux)
     log.Fatal(err)
