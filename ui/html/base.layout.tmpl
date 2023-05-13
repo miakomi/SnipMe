@@ -7,14 +7,15 @@
     </head>
     <body>
         <header>
-            <h1><a href='/'>Snippetbox</a></h1>
+            <h1>{{template "header" .}}</h1>
         </header>
         <nav>
-            <a href='/'>Домашняя страница</a>
+            {{template "header" .}}
         </nav>
         <main>
             {{template "main" .}}
         </main>
+        {{template "footer" .}}
     </body>
 </html>
 {{end}}

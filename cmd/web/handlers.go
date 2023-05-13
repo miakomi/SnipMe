@@ -13,6 +13,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"./ui/html/home.page.tmpl",
 		"./ui/html/base.layout.tmpl",
+        "./ui/html/footer.partial.tmpl",
 	}
     
     if r.URL.Path != "/" {
@@ -35,7 +36,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func showNotFoundError(w http.ResponseWriter, r *http.Request) {
-    ts, err := template.ParseFiles("./ui/html/error404.page.tmpl")
+    files := []string{
+		"./ui/html/error404.page.tmpl",
+        "./ui/html/base.layout.tmpl",
+        "./ui/html/footer.partial.tmpl",
+	}
+    
+    ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", 500)
